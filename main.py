@@ -76,6 +76,45 @@ def parse_args():
     return parser.parse_args()
 
 
+class UsageTracker:
+    def __init__(self) -> None:
+        self.input_other = 0
+        self.input_cache_read = 0
+        self.input_cache_creation = 0
+        self.output = 0
+
+    def add(self, usage) -> None:
+        if usage is None:
+            return
+        self.input_other += usage.input_other
+        self.input_cache_read += usage.input_cache_read
+        self.input_cache_creation += usage.input_cache_creation
+        self.output += usage.output
+
+    @property
+    def input_total(self) -> int:
+        return self.input_other + self.input_cache_read + self.input_cache_creation
+
+    @property
+    def total(self) -> int:
+        return self.input_total + self.output
+
+    def render(self) -> str:
+        input_total = self.input_total
+        total = self.total
+        cache_total = self.input_cache_read + self.input_cache_creation
+        cache_pct = (cache_total / input_total * 100.0) if input_total else 0.0
+
+        return (
+            "Token usage (cumulative)\n"
+            "\n"
+            f"Input : {input_total:>8}  (other={self.input_other}, cache_read={self.input_cache_read}, cache_create={self.input_cache_creation}, cached={cache_pct:.1f}%)\n"
+            f"Output: {self.output:>8}\n"
+            "\n"
+            f"Total : {total:>8}"
+        )
+
+
 def ensure_cwd(cwd: str | None) -> None:
     if cwd is None:
         return
@@ -161,6 +200,7 @@ async def main():
     chat_provider = build_provider(args.model, args.max_tokens)
     history = []
     toolset = SimpleToolset([BashTool()])
+    usage_tracker = UsageTracker()
 
     while True:
         user_message = read_multiline_input(
@@ -168,6 +208,11 @@ async def main():
             "[bold black on bright_cyan] laser [/]> ",
             "[bright_black]... [/]",
         )
+
+
+        if user_message == "/usage":
+            console.print(Padding(Panel.fit(usage_tracker.render(), title="/usage", border_style="bright_black"), 1))
+            continue
 
         if user_message == "/quit":
             console.print("Goodbye [italic]sad computer making shutdown noises...")
@@ -177,6 +222,7 @@ async def main():
 
         while True:
             result = await kosong.step(chat_provider, SYSTEM_PROMPT, toolset, history)
+            usage_tracker.add(result.usage)
             history.append(result.message)
             tool_results = await result.tool_results()
 
