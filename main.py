@@ -58,7 +58,7 @@ def parse_args():
     parser.add_argument(
         "--model",
         choices=list(MODEL_CONFIGS.keys()),
-        default="gpt-5.1-codex-max",
+        default="gpt-5.2",
         help="Model to use",
     )
     parser.add_argument(
