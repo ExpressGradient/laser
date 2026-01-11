@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import shutil
 import os
 import subprocess
 
@@ -122,6 +123,19 @@ def ensure_cwd(cwd: str | None) -> None:
         raise SystemExit(f"--cwd path does not exist or is not a directory: {cwd}")
     os.chdir(cwd)
 
+
+
+def check_deps() -> None:
+    missing: list[tuple[str, str]] = []
+
+    if shutil.which("rg") is None:
+        missing.append(("ripgrep (rg)", "https://github.com/BurntSushi/ripgrep#installation"))
+
+    if missing:
+        console.print("Missing required dependencies:\n")
+        for name, url in missing:
+            console.print(f"- {name}: please install from {url}")
+        raise SystemExit(1)
 
 def render_banner(model: str) -> None:
     cwd = os.getcwd()
@@ -252,4 +266,5 @@ def read_multiline_input(console: Console, prompt: str, continuation: str) -> st
 
 
 if __name__ == "__main__":
+    check_deps()
     asyncio.run(main())
