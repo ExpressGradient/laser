@@ -1,9 +1,12 @@
 [project]
 name = "laser"
 version = "0.1.0"
-description = "Add your description here"
+description = "A small, terminal-based coding agent you run inside a repository"
 readme = "README.md"
 requires-python = ">=3.12"
+authors = [
+    { name = "ExpressGradient", email = "johndoeknown@protonmail.com" },
+]
 dependencies = [
     "kosong[contrib]>=0.37.0",
     "rich>=14.2.0",

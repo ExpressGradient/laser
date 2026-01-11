@@ -1,7 +1,7 @@
 import argparse
 import asyncio
-import shutil
 import os
+import shutil
 import subprocess
 
 import kosong
@@ -55,7 +55,13 @@ Keep responses concise and focused on code changes."""
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Recursor")
+    parser = argparse.ArgumentParser(
+        prog="laser",
+        description=(
+            "Laser: a terminal-based coding agent you run inside a repository. "
+            "It can inspect files, edit code, and run shell commands."
+        ),
+    )
     parser.add_argument(
         "--model",
         choices=list(MODEL_CONFIGS.keys()),
@@ -124,18 +130,20 @@ def ensure_cwd(cwd: str | None) -> None:
     os.chdir(cwd)
 
 
-
 def check_deps() -> None:
     missing: list[tuple[str, str]] = []
 
     if shutil.which("rg") is None:
-        missing.append(("ripgrep (rg)", "https://github.com/BurntSushi/ripgrep#installation"))
+        missing.append(
+            ("ripgrep (rg)", "https://github.com/BurntSushi/ripgrep#installation")
+        )
 
     if missing:
         console.print("Missing required dependencies:\n")
         for name, url in missing:
             console.print(f"- {name}: please install from {url}")
         raise SystemExit(1)
+
 
 def render_banner(model: str) -> None:
     cwd = os.getcwd()
@@ -206,6 +214,7 @@ class BashTool(CallableTool2[BashParams]):
 def cli() -> None:
     asyncio.run(main())
 
+
 async def main():
     args = parse_args()
     ensure_cwd(args.cwd)
@@ -223,9 +232,17 @@ async def main():
             "[bright_black]... [/]",
         )
 
-
         if user_message == "/usage":
-            console.print(Padding(Panel.fit(usage_tracker.render(), title="/usage", border_style="bright_black"), 1))
+            console.print(
+                Padding(
+                    Panel.fit(
+                        usage_tracker.render(),
+                        title="/usage",
+                        border_style="bright_black",
+                    ),
+                    1,
+                )
+            )
             continue
 
         if user_message == "/quit":

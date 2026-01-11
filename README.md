@@ -30,6 +30,7 @@ Useful flags:
 uvx --from git+https://github.com/ExpressGradient/laser laser --help
 uvx --from git+https://github.com/ExpressGradient/laser laser --model gpt-5.2
 uvx --from git+https://github.com/ExpressGradient/laser laser --cwd /path/to/your/repo
+uvx --from git+https://github.com/ExpressGradient/laser laser --max-tokens 4096
 ```
 
 Notes:
@@ -106,6 +107,20 @@ uvx --from . laser
 ```
 
 ## Troubleshooting
+
+### Token usage
+
+Type:
+
+```text
+/usage
+```
+
+To print cumulative token usage for the current session.
+
+### Missing ripgrep (`rg`)
+
+Laser requires [`ripgrep`](https://github.com/BurntSushi/ripgrep) (the `rg` command). If it's not installed, Laser will exit at startup with a message pointing you to install it.
 
 ### Shell commands fail
 
