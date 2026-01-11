@@ -1,0 +1,13 @@
+[project]
+name = "laser"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "kosong[contrib]>=0.37.0",
+    "rich>=14.2.0",
+]
+
+[project.scripts]
+laser = "main:cli"

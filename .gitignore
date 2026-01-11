@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+
+.venv/
+
+.ruff_cache/
+
+build/
+dist/
+*.egg-info/
+
+env.sh
