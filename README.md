@@ -89,6 +89,14 @@ Write a script that:\
 - and suggests fixes
 ```
 
+### Interactive commands
+
+In interactive mode, Laser supports these slash commands:
+
+- `/usage` — print cumulative token usage for the current session
+- `/reset` — clear the current chat history and start a fresh conversation context
+- `/quit` — exit
+
 ### Repository instructions (`AGENTS.md`)
 
 If your repository has an `AGENTS.md` at its root, Laser will read it at the start of each task and follow those repo-specific rules (unless they conflict with Laser’s own safety/workflow rules).
@@ -131,16 +139,6 @@ uvx --from . laser
 ```
 
 ## Troubleshooting
-
-### Token usage
-
-Type:
-
-```text
-/usage
-```
-
-To print cumulative token usage for the current session.
 
 ### Missing ripgrep (`rg`)
 

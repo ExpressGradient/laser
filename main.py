@@ -161,7 +161,8 @@ def render_banner(model: str) -> None:
             f"[bold]Laser[/bold]\n"
             f"- Model: [bright_cyan]{model}[/bright_cyan]\n"
             f"- Directory: [bright_cyan]{cwd}[/bright_cyan]\n"
-            f"- Tip: type [bright_cyan]/quit[/bright_cyan] to exit",
+            f"- Tip: type [bright_cyan]/quit[/bright_cyan] to exit\n"
+            f"       type [bright_cyan]/reset[/bright_cyan] to clear history",
             border_style="bright_black",
         )
     )
@@ -257,23 +258,37 @@ async def main():
             "[bold black on bright_cyan] laser [/]> ",
             "[bright_black]... [/]",
         )
-
-        if user_message == "/usage":
-            console.print(
-                Padding(
-                    Panel.fit(
-                        usage_tracker.render(),
-                        title="/usage",
-                        border_style="bright_black",
-                    ),
-                    1,
+        match user_message:
+            case "/reset":
+                history = []
+                console.print(
+                    Padding(
+                        Panel.fit(
+                            "Conversation reset. History cleared.",
+                            title="/reset",
+                            border_style="bright_black",
+                        ),
+                        1,
+                    )
                 )
-            )
-            continue
-
-        if user_message == "/quit":
-            console.print("Goodbye [italic]sad computer making shutdown noises...")
-            break
+                continue
+            case "/usage":
+                console.print(
+                    Padding(
+                        Panel.fit(
+                            usage_tracker.render(),
+                            title="/usage",
+                            border_style="bright_black",
+                        ),
+                        1,
+                    )
+                )
+                continue
+            case "/quit":
+                console.print("Goodbye [italic]sad computer making shutdown noises...")
+                break
+            case _:
+                pass
 
         history.append(Message(role="user", content=user_message))
 
