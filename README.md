@@ -24,16 +24,38 @@ You can run Laser directly from this repo without downloading it:
 uvx --from git+https://github.com/ExpressGradient/laser laser
 ```
 
-Useful flags:
+Or install it first (so you can run `laser` directly):
 
 ```bash
-uvx --from git+https://github.com/ExpressGradient/laser laser --help
-uvx --from git+https://github.com/ExpressGradient/laser laser --model gpt-5.2
-uvx --from git+https://github.com/ExpressGradient/laser laser --cwd /path/to/your/repo
-uvx --from git+https://github.com/ExpressGradient/laser laser --max-tokens 4096
-# non-interactive single-shot mode
-uvx --from git+https://github.com/ExpressGradient/laser laser --prompt "Run tests and summarize failures"
+uv tool install git+https://github.com/ExpressGradient/laser
+laser
 ```
+
+To upgrade later:
+
+```bash
+uv tool upgrade laser
+```
+
+Useful flags (work with either `uvx ... laser` *or* `laser`):
+
+```bash
+# show help
+laser --help
+
+# pick a model
+laser --model gpt-5.2
+
+# run in a different repo
+laser --cwd /path/to/your/repo
+
+# cap tokens
+laser --max-tokens 4096
+
+# non-interactive single-shot mode
+laser --prompt "Run tests and summarize failures"
+```
+
 
 Notes:
 
