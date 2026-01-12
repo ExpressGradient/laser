@@ -258,6 +258,33 @@ async def main():
             "[bold black on bright_cyan] laser [/]> ",
             "[bright_black]... [/]",
         )
+
+        if user_message.startswith("!"):
+            cmd = user_message[1:].strip()
+
+            if not cmd:
+                continue
+
+            console.print(Padding(f"[bright_green]$[/] {cmd}", (0, 1)))
+            try:
+                result = subprocess.run(
+                    cmd,
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+            except Exception as exc:  # noqa: BLE001
+                console.print(Padding(f"[red]Command failed:[/] {exc}", 1))
+                continue
+
+            if result.stdout:
+                console.print(Padding(result.stdout.rstrip("\n"), 1))
+            if result.stderr:
+                console.print(Padding(result.stderr.rstrip("\n"), 1))
+
+            continue
+
         match user_message:
             case "/reset":
                 history = []

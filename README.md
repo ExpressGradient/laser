@@ -97,6 +97,16 @@ In interactive mode, Laser supports these slash commands:
 - `/reset` — clear the current chat history and start a fresh conversation context
 - `/quit` — exit
 
+You can also run local shell commands directly by prefixing your input with `!`:
+
+- `!<command>` — run `<command>` in your current working directory and print stdout/stderr
+
+Example:
+
+```text
+!pytest -q
+```
+
 ### Repository instructions (`AGENTS.md`)
 
 If your repository has an `AGENTS.md` at its root, Laser will read it at the start of each task and follow those repo-specific rules (unless they conflict with Laser’s own safety/workflow rules).
