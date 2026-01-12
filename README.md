@@ -31,6 +31,8 @@ uvx --from git+https://github.com/ExpressGradient/laser laser --help
 uvx --from git+https://github.com/ExpressGradient/laser laser --model gpt-5.2
 uvx --from git+https://github.com/ExpressGradient/laser laser --cwd /path/to/your/repo
 uvx --from git+https://github.com/ExpressGradient/laser laser --max-tokens 4096
+# non-interactive single-shot mode
+uvx --from git+https://github.com/ExpressGradient/laser laser --prompt "Run tests and summarize failures"
 ```
 
 Notes:

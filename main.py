@@ -80,6 +80,15 @@ def parse_args():
         default=None,
         help="Working directory to run the session from",
     )
+    parser.add_argument(
+        "--prompt",
+        type=str,
+        default=None,
+        help=(
+            "Run a single non-interactive prompt and exit. "
+            "If omitted, starts an interactive session."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -219,11 +228,28 @@ async def main():
     args = parse_args()
     ensure_cwd(args.cwd)
 
-    render_banner(args.model)
+    if args.prompt is None:
+        render_banner(args.model)
+
     chat_provider = build_provider(args.model, args.max_tokens)
     history = []
     toolset = SimpleToolset([BashTool()])
     usage_tracker = UsageTracker()
+
+    if args.prompt is not None:
+        history.append(Message(role="user", content=args.prompt))
+
+        while True:
+            result = await kosong.step(chat_provider, SYSTEM_PROMPT, toolset, history)
+            usage_tracker.add(result.usage)
+            history.append(result.message)
+            tool_results = await result.tool_results()
+
+            if len(tool_results) == 0:
+                console.print(Padding(Markdown(result.message.extract_text()), 1))
+                return
+
+            history.extend(tool_messages(tool_results))
 
     while True:
         user_message = read_multiline_input(
