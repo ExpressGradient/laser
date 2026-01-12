@@ -265,7 +265,6 @@ async def main():
             if not cmd:
                 continue
 
-            console.print(Padding(f"[bright_green]$[/] {cmd}", (0, 1)))
             try:
                 result = subprocess.run(
                     cmd,
