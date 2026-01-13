@@ -49,11 +49,14 @@ laser --model gpt-5.2
 # run in a different repo
 laser --cwd /path/to/your/repo
 
-# cap tokens
+# cap tokens (Anthropic only; other providers ignore this)
 laser --max-tokens 4096
 
 # non-interactive single-shot mode
 laser --prompt "Run tests and summarize failures"
+
+# planning mode (write a checklist plan file before acting)
+laser --planning
 ```
 
 
@@ -75,6 +78,8 @@ Laser is intentionally conservative:
 - it prefers `rg` for search
 - it avoids destructive commands (e.g. `rm -rf`, `git reset --hard`)
 - it checks diffs and file contents after edits
+
+If you want Laser to always start by writing a plan checklist file, use `--planning`.
 
 ### Multi-line input
 

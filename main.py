@@ -69,6 +69,9 @@ def parse_args():
             "  laser --model gpt-5.2\n"
             "  laser --cwd /path/to/repo\n"
             "  laser --prompt 'Find failing tests and fix them'\n\n"
+            "Planning mode:\n"
+            "  laser --planning\n"
+            "  laser --planning --prompt 'Update README'\n\n"
             "Interactive commands:\n"
             "  /quit   Exit\n"
             "  /reset  Clear conversation history\n"
@@ -87,7 +90,7 @@ def parse_args():
         "--max-tokens",
         type=int,
         default=2048,
-        help="Default max tokens (Anthropic only)",
+        help="Default max tokens (Anthropic only; ignored for other providers)",
     )
     parser.add_argument(
         "--cwd",
@@ -102,6 +105,14 @@ def parse_args():
         help=(
             "Run a single non-interactive prompt and exit.\n"
             "If omitted, starts an interactive session."
+        ),
+    )
+    parser.add_argument(
+        "--planning",
+        action="store_true",
+        help=(
+            "Instruct the agent to write a plan checklist to plans/<task>_plan.md "
+            "before taking actions"
         ),
     )
     return parser.parse_args()
@@ -183,6 +194,19 @@ def render_banner(model: str) -> None:
     )
 
 
+def planning_prompt(user_message: str) -> str:
+    return (
+        "Before doing anything else, create/update a plan file in the repo using the bash tool. "
+        "Pick a short <task_slug> derived from the request (snake_case). "
+        "Write the plan to plans/<task_slug>_plan.md. Create the plans/ directory if needed. "
+        'Write the plan as a Markdown checklist ("- [ ]" / "- [x]") with explicit files/commands. '
+        "As you work, keep updating the same checklist: check items off, add/remove items, and keep it accurate. "
+        "After writing the plan file, proceed with the task."
+        "\n\nUser request:\n"
+        f"{user_message}"
+    )
+
+
 def build_provider(model: str, max_tokens: int) -> ChatProvider:
     provider_cls, provider_kwargs = MODEL_CONFIGS[model]
     if provider_cls is Anthropic:
@@ -250,10 +274,12 @@ async def main():
     chat_provider = build_provider(args.model, args.max_tokens)
     history = []
     toolset = SimpleToolset([BashTool()])
+    planning_enabled = args.planning
     usage_tracker = UsageTracker()
 
     if args.prompt is not None:
-        history.append(Message(role="user", content=args.prompt))
+        user_content = planning_prompt(args.prompt) if planning_enabled else args.prompt
+        history.append(Message(role="user", content=user_content))
 
         while True:
             result = await kosong.step(chat_provider, SYSTEM_PROMPT, toolset, history)
@@ -325,13 +351,30 @@ async def main():
                     )
                 )
                 continue
+            case "/plan":
+                planning_enabled = not planning_enabled
+                status = "enabled" if planning_enabled else "disabled"
+                console.print(
+                    Padding(
+                        Panel.fit(
+                            f"Planning is now {status}.",
+                            title="/plan",
+                            border_style="bright_black",
+                        ),
+                        1,
+                    )
+                )
+                continue
             case "/quit":
                 console.print("Goodbye [italic]sad computer making shutdown noises...")
                 break
             case _:
                 pass
 
-        history.append(Message(role="user", content=user_message))
+        user_content = (
+            planning_prompt(user_message) if planning_enabled else user_message
+        )
+        history.append(Message(role="user", content=user_content))
 
         while True:
             result = await kosong.step(chat_provider, SYSTEM_PROMPT, toolset, history)
