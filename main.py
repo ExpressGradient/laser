@@ -58,34 +58,49 @@ def parse_args():
     parser = argparse.ArgumentParser(
         prog="laser",
         description=(
-            "Laser: a terminal-based coding agent you run inside a repository. "
-            "It can inspect files, edit code, and run shell commands."
+            "Terminal coding agent that operates on the current repository\n\n"
+            "Interactive mode: chat with the agent; it can inspect files, edit code, "
+            "and run shell commands (via tools).\n"
+            "Non-interactive mode: run a single prompt and print the result."
         ),
+        epilog=(
+            "Examples:\n"
+            "  laser\n"
+            "  laser --model gpt-5.2\n"
+            "  laser --cwd /path/to/repo\n"
+            "  laser --prompt 'Find failing tests and fix them'\n\n"
+            "Interactive commands:\n"
+            "  /quit   Exit\n"
+            "  /reset  Clear conversation history\n"
+            "  /usage  Show token usage\n"
+            "  !<cmd>  Run a shell command locally (bypasses the agent)"
+        ),
+        formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument(
         "--model",
         choices=list(MODEL_CONFIGS.keys()),
         default="gpt-5.2",
-        help="Model to use",
+        help="Model identifier to use",
     )
     parser.add_argument(
         "--max-tokens",
         type=int,
         default=2048,
-        help="Default max tokens (used by Anthropic)",
+        help="Default max tokens (Anthropic only)",
     )
     parser.add_argument(
         "--cwd",
         type=str,
         default=None,
-        help="Working directory to run the session from",
+        help="Working directory to run the session from (default: current directory)",
     )
     parser.add_argument(
         "--prompt",
         type=str,
         default=None,
         help=(
-            "Run a single non-interactive prompt and exit. "
+            "Run a single non-interactive prompt and exit.\n"
             "If omitted, starts an interactive session."
         ),
     )
