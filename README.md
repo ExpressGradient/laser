@@ -44,7 +44,7 @@ Useful flags (work with either `uvx ... laser` *or* `laser`):
 laser --help
 
 # pick a model
-laser --model gpt-5.2
+laser --model openai/gpt-5.2
 
 # run in a different repo
 laser --cwd /path/to/your/repo
@@ -128,7 +128,7 @@ This is useful for documenting things like:
 Laser supports multiple model backends (configured in `main.py`). Select one with `--model`.
 
 ```bash
-uvx --from git+https://github.com/ExpressGradient/laser laser --model gpt-5.1-codex-max
+uvx --from git+https://github.com/ExpressGradient/laser laser --model openai/gpt-5.2
 ```
 
 If a provider requires environment variables (API keys), set them before running. Common examples:
@@ -139,12 +139,23 @@ If a provider requires environment variables (API keys), set them before running
 
 (Exact names depend on the provider SDK/config; check provider docs.)
 
+Providers are selected via the `<provider>/<model>` format. Examples:
+
+```bash
+laser --model anthropic/claude-opus-4-5
+laser --model google/gemini-3-pro-preview
+laser --model chat/glm-4.7
+```
+
+For OpenAI-compatible legacy models (like `chat/*`), set the base URL env before running
+if you're targeting a non-OpenAI endpoint (for example, `OPENAI_BASE_URL`).
+
 ## Development
 
 If you *are* working on Laser itself, run it locally:
 
 ```bash
-uv run python main.py
+uv run python -m laser
 ```
 
 Or via the console script from your checkout:

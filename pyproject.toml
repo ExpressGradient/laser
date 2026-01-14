@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.scripts]
-laser = "laser.__main__:cli"
+laser = "laser.main:cli"
 
 
 [build-system]
