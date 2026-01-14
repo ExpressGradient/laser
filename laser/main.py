@@ -26,6 +26,13 @@ PROVIDER_CONFIGS = {
     "google": (GoogleGenAI, {}),
     "openai": (OpenAIResponses, {}),
     "chat": (OpenAILegacy, {}),
+    "litellm": (
+        OpenAILegacy,
+        {
+            "base_url": os.getenv("LITELLM_PROXY_API_BASE", "http://localhost:4000"),
+            "api_key": os.getenv("LITELLM_PROXY_API_KEY"),
+        },
+    ),
 }
 
 SYSTEM_PROMPT = """You are Laser, a coding agent for this repository.
@@ -73,7 +80,7 @@ def parse_args():
     parser.add_argument(
         "--model",
         default="openai/gpt-5.2",
-        help="Model identifier to use in the form <provider>/<model>",
+        help="Model identifier to use in the form <provider>/<model>. Providers: anthropic, google, openai, chat, litellm",
     )
     parser.add_argument(
         "--max-tokens",
@@ -217,6 +224,10 @@ def build_provider(model: str, max_tokens: int) -> ChatProvider:
     provider_cls, provider_kwargs = PROVIDER_CONFIGS[provider]
     if provider_cls is Anthropic:
         provider_kwargs = {**provider_kwargs, "default_max_tokens": max_tokens}
+    if provider == "litellm":
+        env_model = os.getenv("LITELLM_MODEL")
+        if env_model:
+            model_name = env_model
     return provider_cls(model=model_name, **provider_kwargs)
 
 
