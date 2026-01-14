@@ -56,7 +56,7 @@ laser --max-tokens 4096
 laser --prompt "Run tests and summarize failures"
 
 # planning mode (write a checklist plan file before acting)
-laser --planning
+laser --plan
 ```
 
 
@@ -79,7 +79,7 @@ Laser is intentionally conservative:
 - it avoids destructive commands (e.g. `rm -rf`, `git reset --hard`)
 - it checks diffs and file contents after edits
 
-If you want Laser to always start by writing a plan checklist file, use `--planning`.
+If you want Laser to always start by writing a plan checklist file, use `--plan`.
 
 ### Multi-line input
 

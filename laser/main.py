@@ -60,8 +60,8 @@ def parse_args():
             "  laser --cwd /path/to/repo\n"
             "  laser --prompt 'Find failing tests and fix them'\n\n"
             "Planning mode:\n"
-            "  laser --planning\n"
-            "  laser --planning --prompt 'Update README'\n\n"
+            "  laser --plan\n"
+            "  laser --plan --prompt 'Update README'\n\n"
             "Interactive commands:\n"
             "  /quit   Exit\n"
             "  /reset  Clear conversation history\n"
@@ -97,7 +97,7 @@ def parse_args():
         ),
     )
     parser.add_argument(
-        "--planning",
+        "--plan",
         action="store_true",
         help=(
             "Instruct the agent to write a plan checklist to plans/<task>_plan.md "
@@ -280,7 +280,7 @@ async def main():
     chat_provider = build_provider(args.model, args.max_tokens)
     history = []
     toolset = SimpleToolset([BashTool()])
-    planning_enabled = args.planning
+    planning_enabled = args.plan
     usage_tracker = UsageTracker()
 
     if args.prompt is not None:
