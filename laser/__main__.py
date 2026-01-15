@@ -1,7 +1,4 @@
-import asyncio
-
-from .main import check_deps, main
+from .main import run
 
 if __name__ == "__main__":
-    check_deps()
-    asyncio.run(main())
+    run()

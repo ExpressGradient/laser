@@ -56,7 +56,7 @@ def parse_args():
         epilog=(
             "Examples:\n"
             "  laser\n"
-            "  laser --model openai/gpt-5.2\n"
+            "  laser --model openai/gpt-5.2-codex\n"
             "  laser --cwd /path/to/repo\n"
             "  laser --prompt 'Find failing tests and fix them'\n\n"
             "Planning mode:\n"
@@ -72,7 +72,7 @@ def parse_args():
     )
     parser.add_argument(
         "--model",
-        default="openai/gpt-5.2",
+        default="openai/gpt-5.2-codex",
         help="Model identifier to use in the form <provider>/<model>",
     )
     parser.add_argument(
@@ -199,12 +199,12 @@ def planning_prompt(user_message: str) -> str:
 def parse_model_identifier(model: str) -> tuple[str, str]:
     if "/" not in model:
         raise SystemExit(
-            "--model must be in the form <provider>/<model>, e.g. openai/gpt-5.2"
+            "--model must be in the form <provider>/<model>, e.g. openai/gpt-5.2-codex"
         )
     provider, model_name = model.split("/", 1)
     if not provider or not model_name:
         raise SystemExit(
-            "--model must be in the form <provider>/<model>, e.g. openai/gpt-5.2"
+            "--model must be in the form <provider>/<model>, e.g. openai/gpt-5.2-codex"
         )
     return provider, model_name
 
@@ -413,6 +413,10 @@ def read_multiline_input(console: Console, prompt: str, continuation: str) -> st
     return first
 
 
-if __name__ == "__main__":
+def run() -> None:
     check_deps()
     asyncio.run(main())
+
+
+if __name__ == "__main__":
+    run()
